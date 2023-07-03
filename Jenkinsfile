@@ -66,9 +66,14 @@ pipeline {
                    -Dsonar.java.checkstyle.reportPaths=target/checkstyle-result.xml'''
                 }
 
-                timeout(time: 10, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
-                }
+                sleep(60)
+timeout(time: 1, unit: 'MINUTES') {
+    def qg = waitForQualityGate()
+    print "Finished waiting"
+    if (qg.status != 'OK') {
+        error "Pipeline aborted due to quality gate failure: ${qg.status}"
+    }
+}  
             }
         }
 
